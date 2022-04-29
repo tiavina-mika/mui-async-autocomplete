@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "@emotion/react": "latest",
+    "@emotion/styled": "latest",
+    "@mui/material": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "description": "https://github.com/mui/material-ui/blob/v5.6.3/docs/data/material/components/autocomplete/Asynchronous.js",
+  "devDependencies": {
+    "react-scripts": "latest"
+  },
+  "name": "Asynchronous Material Demo",
+  "title": "Asynchronous Material Demo"
+}
