@@ -1,6 +1,6 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
+import MUIAutocomplete from "@mui/material/Autocomplete";
 import styled from "@emotion/styled";
 
 function sleep(delay = 0) {
@@ -12,33 +12,52 @@ const StyledTextField = styled(TextField)({
   "& .MuiOutlinedInput-input": {}
 });
 
-export default function Asynchronous() {
-  const [open, setOpen] = React.useState(false);
-  const [selectedValue, setSelectedValue] = React.useState(null);
+const formatOptions = (options) => {
+  return options.map((option) => ({
+    id: option.id,
+    label: option.title
+  }));
+};
 
-  const [options, setOptions] = React.useState([topFilms[0]]);
-  const [enterPress, setEnterPress] = React.useState(false);
+const Autocomplete = ({ value }) => {
+  const [open, setOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = useState(null);
+
+  const [options, setOptions] = useState([]);
+  // const [options, setOptions] = useState(formatOptions([topFilms[0]]));
+  const [enterPress, setEnterPress] = useState(false);
   const loading = open && options.length === 0;
+  console.log("selected value", selectedValue);
+  console.log("options", options);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    if (!value) return;
+    if (selectedValue) return;
+    setSelectedValue({
+      id: value.id,
+      label: value.title
+    });
+  }, [value, selectedValue]);
+
+  useEffect(() => {
     if (enterPress === true) {
-      console.log(selectedValue);
       setEnterPress(false);
     }
   }, [enterPress, selectedValue]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let active = true;
 
-    if (!loading) {
-      return undefined;
-    }
+    // if (!loading) {
+    //   return undefined;
+    // }
 
     (async () => {
       await sleep(1e3); // For demo purposes.
 
       if (active) {
-        setOptions([...topFilms]);
+        console.log("active");
+        setOptions(formatOptions([...films]));
       }
     })();
 
@@ -47,13 +66,14 @@ export default function Asynchronous() {
     };
   }, [loading]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) {
       setOptions([]);
     }
   }, [open]);
 
   const handleChange = (_, value) => {
+    console.log("handleChange", value);
     setSelectedValue(value);
   };
 
@@ -62,8 +82,12 @@ export default function Asynchronous() {
       event.preventDefault();
     }
   };
+  const onFocus = () => {};
+  const onBlur = () => {};
+  const _stopPropagation = (event) => event && event.stopPropagation();
+
   return (
-    <Autocomplete
+    <MUIAutocomplete
       name="film"
       id="asynchronous-film"
       open={open}
@@ -72,14 +96,25 @@ export default function Asynchronous() {
       value={selectedValue}
       onChange={handleChange}
       onKeyDown={onKeyDown}
-      isOptionEqualToValue={(option, value) => option.title === value.title}
-      getOptionLabel={(option) => option.title}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
+      getOptionLabel={(option) => option.label || ""}
       options={options}
       loading={loading}
-      renderInput={(params) => <StyledTextField {...params} label="Films" />}
+      renderInput={(params) => (
+        <StyledTextField
+          {...params}
+          label="Films"
+          onKeyDown={onKeyDown}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          onClick={_stopPropagation}
+        />
+      )}
     />
   );
-}
+};
+
+export default Autocomplete;
 
 // Top films as rated by IMDb users. http://www.imdb.com/chart/top
 const topFilms = [
@@ -131,3 +166,8 @@ const topFilms = [
   { title: "American History X", year: 1998 },
   { title: "Interstellar", year: 2014 }
 ];
+
+export const films = topFilms.map((film, index) => ({
+  id: index + 1,
+  ...film
+}));

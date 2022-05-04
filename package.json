@@ -4,7 +4,8 @@
     "@emotion/styled": "latest",
     "@mui/material": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "uuid": "8.3.2"
   },
   "description": "https://github.com/mui/material-ui/blob/v5.6.3/docs/data/material/components/autocomplete/Asynchronous.js",
   "devDependencies": {
